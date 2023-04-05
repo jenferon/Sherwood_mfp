@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser(description='Files and parameters to calculate 
 parser.add_argument('-t','--filename_tau', help='Files to calculate mfp for', required=True)
 parser.add_argument('-l','--filename_los', help='Files to calculate mfp for', required=True)
 parser.add_argument('-b','--base', help='base', required=True)
+parser.add_argument('-N','--itterations', help='number of itterations', required=True)
 args = parser.parse_args()
 
 
@@ -59,15 +60,31 @@ for k in range(0, len(lines_los)):
         delta = int(nbins*step)
         print(delta )
         F_temp = np.array([])
-        for i in range(0,int((nbins[0]*numlos[0])/delta)):
-            F_temp = np.append(F_temp, np.mean(np.exp(-tau_Lya[i*delta : (i+1)*delta])))
+        temp = np.array([])
+        for j in range (0, int(args.itterations)):
             
+            index = random.randint(0,len(tau_Lya)-1)
+            print(index)
+            for num in range(0,delta):
+                print('num = ' + str(num) + ' index = ' + str(index))
+                if index == len(tau_Lya):
+                    #incase we reach the end of the box
+                    print('end of box')
+                    index  =0
+                temp = np.append(temp, np.exp(-tau_Lya[index]))
+                
+
+                index += 1
+            
+            print(np.mean(temp))        
+            F_temp = np.append(F_temp, np.mean(temp))
+   
         F = np.append(F, np.mean(F_temp))
         z = np.append(z,ztime)
     else:
         continue
 
-
+ 
 plt.subplots(1,1)
 plt.scatter(z, F)
 plt.ylabel(r'$<F>$')
@@ -75,9 +92,7 @@ plt.xlabel('z')
 #plt.legend()
 #plt.savefig('/home/ppxjf3/mfp_data/' + str(args.savefile)+'.pdf')
 plt.show()
-"""
-np.savetxt('/home/ppxjf3/optical_depths/' + str(args.base) +'.txt', (z,F))
+
+np.savetxt('/home/ppxjf3/optical_depths/random_sights/' + str(args.base) + '_N' +str(args.itterations) +'.txt', (z,F))
 for i in range(0,len(F)):
     print('at z = ' + str(z[i]) + ' <F> = ' +str(F[i]))
-
-  """     
