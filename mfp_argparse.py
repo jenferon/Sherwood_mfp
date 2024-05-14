@@ -12,7 +12,6 @@ import argparse
 #argparse variables
 parser = argparse.ArgumentParser(description='Files and parameters to calculate mfp.')
 parser.add_argument('-f','--folder', help='folder with relevant files', required=True)
-parser.add_argument('-N','--itterations', help='Number of itterations in mfp calculation', required=True)
 parser.add_argument('-z_up','--high_z', help='upper z limit', required=True)
 args = parser.parse_args()
 
@@ -40,7 +39,7 @@ lines = np.genfromtxt(str(args.folder)+'/filenames.txt', dtype='str')#'filenames
 z = np.array([])
 mfp_sher = np.array([])
 error = np.array([])
-
+itter = 10000
 
 for k in range(0, len(lines)):
     """_
@@ -64,7 +63,7 @@ for k in range(0, len(lines)):
     Xh     = np.fromfile(readdata,dtype=np.double,count=1) # Hydrogen fraction by mass
     nbins  = np.fromfile(readdata,dtype=np.int32,count=1)  # Number of pixels in each line of sight
     numlos = np.fromfile(readdata,dtype=np.int32,count=1)  # Number of lines of sight
-    print(ztime)
+    #print(ztime)
     # Line of sight locations in box 
     iaxis  = np.fromfile(readdata,dtype=np.int32,count=numlos[0])  # projection axis, x=1, y=2, z=3
     xaxis  = np.fromfile(readdata,dtype=np.double,count=numlos[0]) # x-coordinate in comoving kpc/h
@@ -113,9 +112,11 @@ for k in range(0, len(lines)):
         cm_pos = (posaxis*kPC*1e2)/((1+ztime)*h100)#proper cm
         delta_r = cm_pos[3] - cm_pos[2]
 
-
-        for j in range (0, int(args.itterations)):
-            i = random.randint(0,len(n_HI)-1)
+        #random number seeded so the same random numbers are generated each time
+        np.random.seed(0) 
+        start_value = np.random.randint(len(n_HI)-1, size = itter)
+        for j in start_value:
+            i = j
             tau = 0
             n= 0
             while tau <1:
@@ -126,8 +127,8 @@ for k in range(0, len(lines)):
                 if i == len(n_HI):
                     #incase we reach the end of the box
                     i =0
-            mfp =np.append(mfp,n*delta_r)
-            print(j)
+            mfp =np.append(mfp,(n*delta_r)/tau)
+            #print(j)
 
         #convert to pMpc from comoving cm 
         proper_mfp = mfp*1e-2 /(MPC)
@@ -137,11 +138,10 @@ for k in range(0, len(lines)):
             
         mfp_sher = np.append(mfp_sher, np.mean(proper_mfp))
         z = np.append(z,ztime)
-        #error = np.append(error, err)
 
 
 
-np.savetxt('/home/ppxjf3/mfp_data/' + str(args.folder)+ '_mfp_N' +str(args.itterations) +'.txt', (z,mfp_sher))
+np.savetxt('/home/ppxjf3/mfp_data/' + str(args.folder)+ '_mfp_N' +str(itter) +'.txt', (z,mfp_sher))
 #define points from literature - in pMpc
 obs_mfp = np.array([[6, 5.1, 5.16, 4.86, 4.56],[0.75, 9.09, 10.3, 15.1, 22.2], [0.45, 1.28, 1.6, 1.8, 2.3], [0.65, 1.62, 1.6, 1.8, 2.3]])
 
@@ -152,6 +152,6 @@ plt.yscale('log')
 plt.ylabel(r'$\lambda_{mfp}$ (pMpc)')
 plt.xlabel('z')
 plt.legend()
-plt.savefig('/home/ppxjf3/mfp_data/'  + str(args.folder)+ '_mfp_N' +str(args.itterations) +'.pdf')
+#plt.savefig('/home/ppxjf3/mfp_data/'  + str(args.folder)+ '_mfp_N' +str(args.itterations) +'.pdf')
 plt.show()
 
