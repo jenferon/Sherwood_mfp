@@ -9,13 +9,7 @@ from astropy import constants as const
 import random
 import scipy
 import argparse
-"""
-#argparse variables
-parser = argparse.ArgumentParser(description='Files and parameters to calculate mfp.')
-parser.add_argument('-f','--folder', help='folder with relevant files', required=True)
-parser.add_argument('-z_up','--high_z', help='upper z limit', required=True)
-args = parser.parse_args()
-"""
+
 #global constants
 MPC        = 3.08568025e+22  # m
 H0         = 1.0e5/MPC       # s-1
@@ -118,22 +112,6 @@ plt.rc('legend', fontsize=font_small_size) # legend fontsize
 plt.rc('figure', titlesize=font_bigger_size)
 
 
-#correct font for MNRAS
-#can be found at https://www.fontsquirrel.com/fonts/nimbus-roman-no9-l
-#can be installed on Unix systems by putting unzipped folder in directory /home/{user}/.fonts
-#run "fc-cache -v" in console to inform system of new font
-#print(matplotlib.font_manager.findSystemFonts(fontpaths=None, fontext='ttf'))
-#plt.rc('font', family='Nimbus Roman')
-# mpl.rcParams["font.family"] = "Nimbus Roman"
-# mpl.rcParams['mathtext.fontset'] = 'custom'
-# mpl.rcParams['mathtext.rm'] = 'Nimbus Roman'
-# mpl.rcParams['mathtext.it'] = 'Nimbus Roman:italic'
-# mpl.rcParams['mathtext.bf'] = 'Nimbus Roman:bold'
-"""
-plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-plt.rc('text', usetex=True)
-"""
-
 #DPI of MNRAS is 300
 mpl.rcParams['figure.dpi'] = 300/scale
 # Set up a figure with four panels, with two rows and columns
@@ -153,30 +131,17 @@ ax.plot(centers_70, np.log10(pdf_70), color = colour[2], label=r'$\langle x_{\ma
 ax.plot(centers_60, np.log10(pdf_60), color = colour[3], label=r'$\langle x_{\mathrm{H1}} \rangle = 10^{-1.3}$')
 ax.plot(centers_54, np.log10(pdf_54), color = colour[4], label=r'$\langle x_{\mathrm{H1}} \rangle = 10^{-4.2}$')
 
-ax.plot(centers_54_thresh, np.log10(pdf_54_thresh), linestyle = '--', color = colour[4])#, label=r'$\langle x_{\mathrm{H1}} \rangle = 10^{-4.2}$')#.format(np.log10(av_xHI_54)))
-ax.plot(centers_60_thresh, np.log10(pdf_60_thresh), linestyle='--', color = colour[3])#, label=r'$\langle x_{\mathrm{H1}} \rangle = 10^{-1.3}$')#label='xHI=1e{:.2f}'.format(np.log10(av_xHI_60)))
-ax.plot(centers_70_thresh, np.log10(pdf_70_thresh), color = colour[2], linestyle='--')#, label=r'$\langle x_{\mathrm{H1}} \rangle = 10^{-0.4}$')#label='xHI=1e{:.2f}'.format(np.log10(av_xHI_70)))
-ax.plot(centers_80_thresh, np.log10(pdf_80_thresh),linestyle = '--', color = colour[1])#, label=r'$\langle x_{\mathrm{H1}} \rangle = 10^{-0.2}$')#label='xHI=1e{:.2f}'.format(np.log10(av_xHI_80)))
-ax.plot(centers_100_thresh, np.log10(pdf_100_thresh), color = colour[0], linestyle = '--')# label=r'$\langle x_{\mathrm{H1}} \rangle = 0.9$')
+ax.plot(centers_54_thresh, np.log10(pdf_54_thresh), linestyle = '--', color = colour[4])
+ax.plot(centers_60_thresh, np.log10(pdf_60_thresh), linestyle='--', color = colour[3])
+ax.plot(centers_70_thresh, np.log10(pdf_70_thresh), color = colour[2], linestyle='--')
+ax.plot(centers_80_thresh, np.log10(pdf_80_thresh),linestyle = '--', color = colour[1])
+ax.plot(centers_100_thresh, np.log10(pdf_100_thresh), color = colour[0], linestyle = '--')
 
 ax.set_xlabel(r'$log_{10}[N_{\mathrm{H1}} / \mathrm{cm}^{-2}]$', fontsize = 18)
 ax.set_ylabel(r'$log_{10}[\frac{ \partial ^2n}{ \partial log_{10}[N_{\mathrm{H1}}] \partial R} /\mathrm{ pMPc}^{-1}]$', fontsize = 18)
-#ax[0].set_xticks(fontsize=16)
-#ax[0].set_yticks(fontsize=16)
+
 ax.legend(frameon=False, fontsize = 11)
 
-"""ax[1].plot(centers_100_50, np.log10(pdf_100_50), color = colour[0], label=r'$\langle x_{\mathrm{H1}} \rangle = 0.9$')#label='xHI=1e{:.2f}'.format(np.log10(av_xHI_100)))
-ax[1].plot(centers_100_100, np.log10(pdf_100_100), color = colour[0], linestyle = '--')
-ax[1].plot(centers_100_25, np.log10(pdf_100_25), color = colour[0], linestyle = ':')
-ax[1].plot(centers_60_50, np.log10(pdf_60_50), color = colour[3], label=r'$\langle x_{\mathrm{H1}} \rangle = 10^{-1.3}$')
-ax[1].plot(centers_60_100, np.log10(pdf_60_100), color = colour[3], linestyle = '--')
-ax[1].plot(centers_60_25, np.log10(pdf_60_25), color = colour[3], linestyle=':')
-
-ax[1].set_xlabel(r'$log_{10}[N_{\mathrm{H1}} /\mathrm{cm}^{-2}]$', fontsize = 18)
-ax[1].set_ylabel(r'$log_{10}[\frac{ \partial ^2n}{ \partial log_{10}[N_{\mathrm{H1}}] \partial R} / \mathrm{pMPc}^{-1}]$', fontsize = 18)
-#ax[1].set_xticks(fontsize=16)
-#ax[1].set_yticks(fontsize=16)
-ax[1].legend(frameon=False, fontsize = 11)"""
 plt.tight_layout()
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
